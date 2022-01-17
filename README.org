@@ -1,0 +1,115 @@
+#+TITLE: Readme
+
+This repo holds the source code for the paper *Multimodal Performers for Genomic Selection and Crop Yield Prediction*.
+
+* Args
+There are a multitude of possible arguments that can be set by the user. However, here are the most important arguments:
+** network
+This argument sets the type of network to train.
+
+There are 5 different networks to choose from:
+- Vanilla CNN: --network 1
+- ResNet: --network 2
+- Performer: --network 3
+- Historical Performer: --network 4
+- Multimodal Performer: --network 5
+
+** datasets_dir
+This argument is used to tell the code where the folder containing the different datasets is. It expects a path to a folder containing one, or more, sub-folders each containing a dataset in the form of a lmdb database.
+
+When exploring options, we used several potential ways of generating the $y$ values, each of which resulted in its own database containing a dataset with that particular way of representing the $y$. The path specified in this argument should point to the folder containing all the different datasets, not one particular dataset as that is set in the next argument.
+
+--dataset_dir /path/to/datasets/folder/
+
+** dataset
+This argument specifies the particular dataset of the potentially many options in the directory specified in the previous arg.
+
+--dataset dataset-name
+
+The combination of the dataset_dir argument and dataset argument will specify the complete path to the dataset used for training the network as such:
+
+Actual Training path = concatenate(dataset_dir, dataset)
+
+Thus this argument should only contain the name of the dataset.
+
+** historical_weather
+This argument specifies whether the code should expect historical weather data or mean weather data. If set to 0, it expects mean data, if set to 1 it expects historical data.
+
+Historical data is expected to be a tensor of the following shape: [batch_size, history_length, num_recordings], where history_length refers to the number of days recorded and num_recordings refers to the number of different types of recordings included in the data. So for data containing one precipitation and one temperature recording per historical step, the num_recordings is 2.
+
+*!NOTE!*
+ This code expects the num_recordings for weather data to be 2. If your data is different, you must change it in the code.
+*!NOTE!*
+
+--historical_weather 1
+
+** gene_length
+This argument specifies the length of the genome (number of SNP recordings included) in the dataset.
+
+--gene_length 13321
+
+** gene_size
+This argument specifies the size of each SNP recording. If one records for i.e. additive effects, this should be set to 4 (-1, 0, 1, NA).
+
+--gene_size 4
+
+** inverse_transform
+This code expects the scaling of y values to be done using one of the scalers found in the [[https://scikit-learn.org/stable/modules/classes.html#module-sklearn.preprocessing][scikit learn preprocessing]] library. These scalers can be saved so that the inverse scaling transform can be used. By specifying the inverste_transform a saved scaler will be loaded and its inverse will be used to calculate the metrics on the y values, rather than the scaled ones.
+
+--inverse_transform /path/to/scaler.save
+
+** Example cli call:
+Here's an example of a terminal call:
+python main.py --network 2 --inverse_transform /data/dataset_dbs/all-row/13112021_log_y_scaler.save --datasets_dir /data/dataset_dbs/all-row/ --dataset 13112021_mean_recoded_std_z_log_y --historical_weather 0 --gene_length 10679 --gene_size 4
+
+* Installing python environment
+This code base includes a conda environment named "environment.yml". This environment has been verified to be able to run the code. To install the environment, first make sure you have anaconda [[https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html][installed]]. Then, run the command "conda env create -f environment.yml" in the command line.
+
+You can now activate the environment by:
+- making sure you have activated conda (source /path/to/anaconda/bin/activate)
+- activating the environment by running conda activate genomic_selection
+
+  Your terminal prompt should change to include something like "(genomic_selection) your_username@machine_hostname" to indicate a successful activation.
+
+  You can now run the code using the arguments described above.
+
+
+* Fixing parsing problem with pytorch-lightning
+Pythorch-lightning does not like the HyperOptArgumentParser introduced in the test-tube package. To fix errors related to this you need to replace the following line in the code:
+
+Starting at line 265 replace:
+#+begin_src python
+        for k in params.keys():
+            # convert relevant np scalars to python types first (instead of str)
+            if isinstance(params[k], (np.bool_, np.integer, np.floating)):
+                params[k] = params[k].item()
+            elif type(params[k]) not in [bool, int, float, str, torch.Tensor]:
+                params[k] = str(params[k])
+        return params
+#+end_src
+with:
+#+begin_src python
+  import types
+          for k in params.keys():
+              # convert relevant np scalars to python types first (instead of str)
+              if isinstance(params[k], (np.bool_, np.integer, np.floating)):
+                  params[k] = params[k].item()
+              elif type(params[k]) not in [bool, int, float, str, torch.Tensor, types.MethodType]:
+                  params[k] = str(params[k])
+          return params
+#+end_src
+* Licence
+Copyright (C) 2022 Håkon Måløy 
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
