@@ -1,6 +1,6 @@
 #+TITLE: Readme
 
-This repo holds the source code for the paper *Multimodal Performers for Genomic Selection and Crop Yield Prediction*.
+This repo holds the source code for the paper *Multimodal Performers for Genomic Selection and Crop Yield Prediction*, doi: https://doi.org/10.1016/j.atech.2021.100017.
 
 * Args
 There are a multitude of possible arguments that can be set by the user. However, here are the most important arguments:
@@ -98,6 +98,24 @@ with:
                   params[k] = str(params[k])
           return params
 #+end_src
+
+* Citation
+If you use this work, please cite it using the following bibtex:
+@article{MALOY2021100017,
+title = {Multimodal performers for genomic selection and crop yield prediction},
+journal = {Smart Agricultural Technology},
+volume = {1},
+pages = {100017},
+year = {2021},
+issn = {2772-3755},
+doi = {https://doi.org/10.1016/j.atech.2021.100017},
+url = {https://www.sciencedirect.com/science/article/pii/S2772375521000174},
+author = {Håkon Måløy and Susanne Windju and Stein Bergersen and Muath Alsheikh and Keith L. Downing},
+keywords = {Genomic selection, Yield prediction, Deep learning, Attention models, Barley},
+abstract = {Working towards optimal crop yields is a crucial step towards securing a stable food supply for the world. To this end, approaches to model and predict crop yields can help speed up research and reduce costs. However, crop yield prediction is very challenging due to the dependencies on factors such as genotype and environmental factors. In this paper we introduce a performer-based deep learning framework for crop yield prediction using single nucleotide polymorphisms and weather data. We compare the proposed models with traditional Bayesian-based methods and traditional neural network architectures on the task of predicting barley yields across 8 different locations in Norway for the years 2017 and 2018. We show that the performer-based models significantly outperform the traditional approaches, achieving an R2 score of 0.820 and a root mean squared error of 69.05, compared to 0.807 and 71.63, and 0.076 and 149.78 for the best traditional neural network and traditional Bayesian approach respectively. Furthermore, we show that visualizing the self-attention maps of a Multimodal Performer network indicates that the model makes meaningful connections between genotype and weather data that can be used by the breeder to inform breeding decisions and shorten breeding cycle length. The performer-based models can also be applied to other types of genomic selection such as salmon breeding for increased Omega-3 fatty acid production or similar animal husbandry applications. The code is available at: https://github.com/haakom/pay-attention-to-genomic-selection.}
+}
+
+
 * Licence
 Copyright (C) 2022 Håkon Måløy 
 
